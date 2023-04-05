@@ -21,6 +21,8 @@ int	numSortedTeamPlayers;
 char systemChat[256];
 char teamChat1[256];
 char teamChat2[256];
+vec4_t crosshair_color;
+int chc_modcount = -1;
 
 #ifdef MISSIONPACK
 
@@ -2002,11 +2004,12 @@ CG_DrawCrosshair
 =================
 */
 static void CG_DrawCrosshair( void ) {
-	float		w, h;
-	qhandle_t	hShader;
-	float		f;
-	float		x, y;
-	int			ca;
+	float			w, h;
+	qhandle_t		hShader;
+	float			f;
+	float			x, y;
+	int				ca;
+	unsigned int 	tc;
 
 	if ( !cg_drawCrosshair.integer ) {
 		return;
@@ -2026,6 +2029,16 @@ static void CG_DrawCrosshair( void ) {
 
 		CG_ColorForHealth( hcolor );
 		trap_R_SetColor( hcolor );
+	} else if (cg_crosshairColor.modificationCount > chc_modcount) {
+		tc = atoi(cg_crosshairColor.string);
+    	chc_modcount = cg_crosshairColor.modificationCount;
+    
+    	crosshair_color[0] = (float)((tc >> 24) & 0xff)/255.0;
+    	crosshair_color[1] = (float)((tc >> 16) & 0xff)/255.0;
+    	crosshair_color[2] = (float)((tc >> 8) & 0xff)/255.0;
+    	crosshair_color[3] = (float)((tc) & 0xff)/255.0;
+    	//crosshair_color[3] = 1.0;
+		trap_R_SetColor(crosshair_color);
 	} else {
 		trap_R_SetColor( NULL );
 	}
